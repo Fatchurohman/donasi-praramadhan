@@ -142,10 +142,10 @@
                 </div>
 
                 <div class="space-y-2">
-                    <p class="text-[11px] text-slate-300">Sudah transfer atau siap kirim barang? Konfirmasi ke bendahara agar segera diberi tanda centang (✅):</p>
+                    <p class="text-[11px] text-slate-300">Sudah transfer atau sudah mengirim barang? Konfirmasi ke bendahara agar status segera diperbarui:</p>
                     <a id="btn-wa-konfirmasi" href="#" target="_blank" rel="noopener noreferrer" class="w-full py-3 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs sm:text-sm flex items-center justify-center space-x-2 transition-all shadow">
                         <i class="fa-brands fa-whatsapp text-lg"></i>
-                        <span>Konfirmasi Transfer ke WA</span>
+                        <span>Konfirmasi Transfer / Kirim via WA</span>
                     </a>
                 </div>
             </section>
@@ -160,7 +160,7 @@
                         <span class="text-xs font-bold uppercase text-gold-300">💧 Air Mineral</span>
                         <span class="text-[11px] font-bold text-slate-300 bg-slate-900 px-2.5 py-0.5 rounded-full border border-slate-700">Kebutuhan: 450 Dos</span>
                     </div>
-                    <p id="sum-air-masuk" class="text-2xl font-extrabold text-white mt-1">0 Dos <span class="text-xs font-normal text-slate-400">diterima</span></p>
+                    <p id="sum-air-masuk" class="text-2xl font-extrabold text-white mt-1">0 Dos <span class="text-xs font-normal text-slate-400">sudah dikirim</span></p>
                     <p class="text-[11px] text-slate-400">Total kesanggupan: <span id="sum-air-total" class="text-gold-300 font-semibold">0 Dos</span></p>
                 </div>
 
@@ -181,7 +181,7 @@
                         <span class="text-xs font-bold uppercase text-gold-300">🌴 Kurma</span>
                         <span class="text-[11px] font-bold text-slate-300 bg-slate-900 px-2.5 py-0.5 rounded-full border border-slate-700">Kebutuhan: 26 Dos</span>
                     </div>
-                    <p id="sum-kurma-masuk" class="text-2xl font-extrabold text-white mt-1">0 Dos <span class="text-xs font-normal text-slate-400">diterima</span></p>
+                    <p id="sum-kurma-masuk" class="text-2xl font-extrabold text-white mt-1">0 Dos <span class="text-xs font-normal text-slate-400">sudah dikirim</span></p>
                     <p class="text-[11px] text-slate-400">Total kesanggupan: <span id="sum-kurma-total" class="text-gold-300 font-semibold">0 Dos</span></p>
                 </div>
 
@@ -202,7 +202,7 @@
                         <span class="text-xs font-bold uppercase text-gold-300">💰 Dana Uang</span>
                         <span class="text-[11px] font-bold text-amber-300 bg-amber-950/70 px-2.5 py-0.5 rounded-full border border-amber-500/30">RAPB Menyusul</span>
                     </div>
-                    <p id="sum-uang-masuk" class="text-2xl font-extrabold text-white mt-1">Rp 0 <span class="text-xs font-normal text-slate-400">diterima</span></p>
+                    <p id="sum-uang-masuk" class="text-2xl font-extrabold text-white mt-1">Rp 0 <span class="text-xs font-normal text-slate-400">sudah transfer</span></p>
                     <p class="text-[11px] text-slate-400">Total kesanggupan: <span id="sum-uang-total" class="text-gold-300 font-semibold">Rp 0</span></p>
                 </div>
 
@@ -217,7 +217,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-gold-500/20">
                 <div>
                     <h2 class="text-lg font-bold text-white font-amiri">Daftar Kesanggupan Donatur</h2>
-                    <p class="text-xs text-slate-400">Status <span class="text-emerald-300 font-bold">✅ Sudah</span> diverifikasi langsung oleh Panitia/Bendahara</p>
+                    <p class="text-xs text-slate-400">Status <span class="text-emerald-300 font-bold">✅ Sudah Transfer / Sudah Dikirim</span> diverifikasi langsung oleh Panitia</p>
                 </div>
                 <button type="button" id="btn-refresh" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-gold-300 border border-gold-500/30 rounded-lg text-xs font-semibold">
                     <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
@@ -251,11 +251,11 @@
                 </div>
                 <div>
                     <h2 class="text-xs sm:text-sm font-bold text-gold-300">Panel Verifikasi Panitia / Bendahara</h2>
-                    <p class="text-[11px] text-slate-400">Masukkan PIN Panitia (1448) untuk mengaktifkan tombol centang ✅ di daftar donatur.</p>
+                    <p class="text-[11px] text-slate-400">Masukkan PIN khusus Panitia untuk mengaktifkan tombol verifikasi di daftar donatur.</p>
                 </div>
             </div>
             <div class="flex items-center gap-2 w-full sm:w-auto">
-                <input type="password" id="admin-pin-input" inputmode="numeric" placeholder="PIN Panitia..." class="w-full sm:w-36 bg-slate-900 border border-gold-500/50 rounded-xl px-3 py-2 text-xs text-white font-mono text-center focus:outline-none focus:border-gold-400">
+                <input type="password" id="admin-pin-input" inputmode="numeric" placeholder="Masukkan PIN..." class="w-full sm:w-36 bg-slate-900 border border-gold-500/50 rounded-xl px-3 py-2 text-xs text-white font-mono text-center focus:outline-none focus:border-gold-400">
                 <button type="button" id="btn-activate-admin" class="px-4 py-2 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-emerald-950 font-extrabold rounded-xl text-xs shrink-0">Aktifkan</button>
             </div>
         </section>
@@ -281,6 +281,7 @@
 
         let cachedItems = [];
         let adminPin = '';
+        let lastSummary = { airMasuk: 0, kurmaMasuk: 0, uangMasuk: 0 };
 
         const formatRp = (n) => new Intl.NumberFormat('id-ID', {
             style: 'currency', currency: 'IDR', maximumFractionDigits: 0
@@ -306,7 +307,14 @@
             return `${Number(item.jumlah).toLocaleString('id-ID')} Dos`;
         };
 
-        const updateDosCard = (masuk, target, sumMasukId, barId, statusId) => {
+        const getStatusLabel = (item) => {
+            if (item.status === 'Sudah') {
+                return item.jenis === 'Uang' ? '✅ Sudah Transfer' : '✅ Sudah Dikirim';
+            }
+            return '⏳ Kesanggupan';
+        };
+
+        const updateDosCard = (masuk, target, barId, statusId) => {
             const pct = Math.min(100, Math.round((masuk / target) * 100));
             document.getElementById(barId).style.width = `${pct}%`;
 
@@ -344,18 +352,20 @@
                 }
             });
 
+            lastSummary = { airMasuk, kurmaMasuk, uangMasuk };
+
             // Air Mineral
-            document.getElementById('sum-air-masuk').innerHTML = `${airMasuk.toLocaleString('id-ID')} Dos <span class="text-xs font-normal text-slate-400">diterima</span>`;
+            document.getElementById('sum-air-masuk').innerHTML = `${airMasuk.toLocaleString('id-ID')} Dos <span class="text-xs font-normal text-slate-400">sudah dikirim</span>`;
             document.getElementById('sum-air-total').textContent = `${airTotal.toLocaleString('id-ID')} Dos`;
-            updateDosCard(airMasuk, TARGET_AIR_DOS, 'sum-air-masuk', 'bar-air', 'status-air');
+            updateDosCard(airMasuk, TARGET_AIR_DOS, 'bar-air', 'status-air');
 
             // Kurma
-            document.getElementById('sum-kurma-masuk').innerHTML = `${kurmaMasuk.toLocaleString('id-ID')} Dos <span class="text-xs font-normal text-slate-400">diterima</span>`;
+            document.getElementById('sum-kurma-masuk').innerHTML = `${kurmaMasuk.toLocaleString('id-ID')} Dos <span class="text-xs font-normal text-slate-400">sudah dikirim</span>`;
             document.getElementById('sum-kurma-total').textContent = `${kurmaTotal.toLocaleString('id-ID')} Dos`;
-            updateDosCard(kurmaMasuk, TARGET_KURMA_DOS, 'sum-kurma-masuk', 'bar-kurma', 'status-kurma');
+            updateDosCard(kurmaMasuk, TARGET_KURMA_DOS, 'bar-kurma', 'status-kurma');
 
             // Dana Uang
-            document.getElementById('sum-uang-masuk').innerHTML = `${formatRp(uangMasuk)} <span class="text-xs font-normal text-slate-400">diterima</span>`;
+            document.getElementById('sum-uang-masuk').innerHTML = `${formatRp(uangMasuk)} <span class="text-xs font-normal text-slate-400">sudah transfer</span>`;
             document.getElementById('sum-uang-total').textContent = formatRp(uangTotal);
             const statusUangEl = document.getElementById('status-uang');
             if (TARGET_UANG_RP > 0) {
@@ -379,9 +389,12 @@
 
             tbody.innerHTML = cachedItems.map((item, idx) => {
                 const isDone = item.status === 'Sudah';
+                const isUang = item.jenis === 'Uang';
+                const statusLabel = getStatusLabel(item);
+
                 const badge = isDone
-                    ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">✅ Sudah</span>`
-                    : `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">⏳ Belum</span>`;
+                    ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">${statusLabel}</span>`
+                    : `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">${statusLabel}</span>`;
 
                 const rwBadge = item.rw && item.rw !== '-'
                     ? `<span class="ml-1.5 text-[10px] font-bold bg-emerald-900 text-gold-300 border border-gold-500/30 px-2 py-0.5 rounded-md">${escapeHTML(item.rw)}</span>`
@@ -389,8 +402,8 @@
 
                 const adminCols = isAdmin ? `
                     <td class="py-3 px-3 text-center whitespace-nowrap">
-                        <button type="button" data-action="toggle" data-id="${escapeHTML(item.id)}" class="px-2.5 py-1 rounded-lg text-xs font-bold mr-1 ${isDone ? 'bg-slate-700 text-slate-200' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}">
-                            ${isDone ? 'Batal' : '✅ Centang'}
+                        <button type="button" data-action="toggle" data-id="${escapeHTML(item.id)}" data-jenis="${escapeHTML(item.jenis)}" class="px-2.5 py-1 rounded-lg text-xs font-bold mr-1 ${isDone ? 'bg-slate-700 text-slate-200' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}">
+                            ${isDone ? 'Batal' : (isUang ? '✅ Transfer' : '✅ Dikirim')}
                         </button>
                         <button type="button" data-action="delete" data-id="${escapeHTML(item.id)}" data-nama="${escapeHTML(item.nama)}" class="px-2 py-1 rounded-lg text-xs bg-red-900/70 hover:bg-red-800 text-red-200" title="Hapus">
                             <i class="fa-solid fa-trash-can"></i>
@@ -430,7 +443,7 @@
             }
         }
 
-        async function toggleStatus(id) {
+        async function toggleStatus(id, jenis) {
             try {
                 const res = await fetch(GAS_URL, {
                     method: 'POST',
@@ -439,7 +452,11 @@
                 });
                 const json = await res.json();
                 if (json.status !== 'ok') throw new Error(json.message);
-                showAlert(json.message);
+
+                const msg = json.new_status === 'Sudah'
+                    ? (jenis === 'Uang' ? 'Status diubah menjadi ✅ Sudah Transfer' : 'Status diubah menjadi ✅ Sudah Dikirim')
+                    : 'Status dikembalikan menjadi ⏳ Kesanggupan';
+                showAlert(msg);
                 loadData();
             } catch (err) {
                 showAlert(err.message, true);
@@ -470,22 +487,22 @@
             }
             let lines = [
                 '*🌙 UPDATE DONASI PRA-RAMADHAN 1448 H*',
-                '_(Tanda ✅ = Sudah Transfer / Diterima)_',
+                '_(✅ = Sudah Transfer/Dikirim | ⏳ = Kesanggupan)_',
                 ''
             ];
 
             cachedItems.forEach((item, idx) => {
-                const icon = item.status === 'Sudah' ? '✅' : '⏳';
                 const rwTxt = item.rw && item.rw !== '-' ? ` (${item.rw})` : '';
                 const jml = item.jenis === 'Uang' ? formatRp(item.jumlah) : `${item.jumlah} Dos`;
-                lines.push(`${idx + 1}. ${item.nama}${rwTxt} — ${item.jenis}: ${jml} ${icon}`);
+                const statusTxt = getStatusLabel(item);
+                lines.push(`${idx + 1}. ${item.nama}${rwTxt} — ${item.jenis}: ${jml} (${statusTxt})`);
             });
 
             lines.push('');
-            lines.push('*Rekap Diterima vs Kebutuhan:*');
-            lines.push(`• Air Mineral: ${document.getElementById('sum-air-masuk').textContent.replace(' diterima', '')} / ${TARGET_AIR_DOS} Dos (${document.getElementById('status-air').textContent.replace('⚠️ ', '')})`);
-            lines.push(`• Kurma: ${document.getElementById('sum-kurma-masuk').textContent.replace(' diterima', '')} / ${TARGET_KURMA_DOS} Dos (${document.getElementById('status-kurma').textContent.replace('⚠️ ', '')})`);
-            lines.push(`• Dana Uang: ${document.getElementById('sum-uang-masuk').textContent.replace(' diterima', '')} (Kebutuhan menyusul)`);
+            lines.push('*Rekap Masuk vs Kebutuhan:*');
+            lines.push(`• Air Mineral: ${lastSummary.airMasuk.toLocaleString('id-ID')} / ${TARGET_AIR_DOS} Dos (${document.getElementById('status-air').textContent.replace('⚠️ ', '')})`);
+            lines.push(`• Kurma: ${lastSummary.kurmaMasuk.toLocaleString('id-ID')} / ${TARGET_KURMA_DOS} Dos (${document.getElementById('status-kurma').textContent.replace('⚠️ ', '')})`);
+            lines.push(`• Dana Uang: ${formatRp(lastSummary.uangMasuk)} sudah transfer (Kebutuhan menyusul)`);
             lines.push('');
             lines.push(`Isi kesanggupan lewat link:\n${window.location.href}`);
 
@@ -499,7 +516,7 @@
             document.getElementById('rek-nomor').textContent = NO_REKENING;
             document.getElementById('rek-nama').textContent = ATAS_NAMA;
 
-            const waText = encodeURIComponent('Assalamualaikum, saya ingin konfirmasi transfer/penyerahan donasi Pra-Ramadhan 1448 H.');
+            const waText = encodeURIComponent('Assalamualaikum, saya ingin konfirmasi transfer/pengiriman donasi Pra-Ramadhan 1448 H.');
             document.getElementById('btn-wa-konfirmasi').href = `https://wa.me/${WA_BENDAHARA}?text=${waText}`;
 
             document.getElementById('btn-copy-rek').addEventListener('click', () => {
@@ -551,7 +568,7 @@
                     e.target.reset();
                     document.getElementById('label-jumlah').textContent = 'Jumlah (Dos)';
                     document.getElementById('input-jumlah').placeholder = 'Contoh: 5';
-                    showAlert('✅ ' + json.message + ' Silakan lanjutkan transfer/konfirmasi ke Bendahara.');
+                    showAlert('✅ ' + json.message + ' Status tercatat sebagai Kesanggupan.');
                     loadData();
                 } catch (err) {
                     showAlert('❌ Gagal mengirim: ' + err.message, true);
@@ -566,7 +583,7 @@
                 if (!btn) return;
                 const action = btn.dataset.action;
                 const id = btn.dataset.id;
-                if (action === 'toggle') toggleStatus(id);
+                if (action === 'toggle') toggleStatus(id, btn.dataset.jenis || '');
                 if (action === 'delete') deleteItem(id, btn.dataset.nama || '');
             });
 
@@ -575,7 +592,7 @@
                 if (!pin) return showAlert('Masukkan PIN Panitia terlebih dahulu.', true);
                 adminPin = pin;
                 renderTableAndSummary();
-                showAlert('🔓 Mode Admin aktif. Silakan klik tombol ✅ Centang pada donatur yang sudah transfer.');
+                showAlert('🔓 Mode Admin aktif. Silakan klik tombol verifikasi pada daftar donatur.');
             });
 
             document.getElementById('btn-copy-wa').addEventListener('click', copyRekapWA);
