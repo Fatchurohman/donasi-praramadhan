@@ -54,9 +54,13 @@
                     <i class="fa-solid fa-chart-pie"></i>
                     <span>Rekap RW</span>
                 </a>
+                <a href="#daftar-donatur" class="px-3 py-2 bg-emerald-900 hover:bg-emerald-800 text-emerald-200 border border-emerald-500/40 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5">
+                    <i class="fa-solid fa-list-check"></i>
+                    <span>Daftar Per RW</span>
+                </a>
                 <button type="button" id="btn-copy-wa" class="px-3 py-2 bg-emerald-800 hover:bg-emerald-700 text-gold-300 border border-gold-500/30 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5">
                     <i class="fa-brands fa-whatsapp text-sm"></i>
-                    <span>Rekap Donatur</span>
+                    <span>Salin WA</span>
                 </button>
                 <a href="#panel-admin-bawah" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5">
                     <i class="fa-solid fa-lock"></i>
@@ -227,7 +231,7 @@
                         <i class="fa-solid fa-chart-pie text-gold-400"></i>
                         <span>Rekap Perolehan Per RW & Total Semua RW</span>
                     </h2>
-                    <p class="text-xs text-slate-400 mt-0.5">Pilih jenis rekap di bawah lalu bagikan langsung ke grup WhatsApp</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Ketuk nama RW untuk melihat daftar donaturnya, atau bagikan rekap ke grup WA</p>
                 </div>
 
                 <div class="flex flex-wrap items-center gap-2">
@@ -279,8 +283,8 @@
             </div>
         </section>
 
-        <!-- 4. DAFTAR DONATUR REAL-TIME (NAMA & RW TERPISAH) -->
-        <section class="glass-card rounded-2xl p-5 sm:p-6 shadow-xl">
+        <!-- 4. DAFTAR DONATUR REAL-TIME + MENU TAMPILKAN PER RW -->
+        <section id="daftar-donatur" class="scroll-mt-24 glass-card rounded-2xl p-5 sm:p-6 shadow-xl">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-gold-500/20">
                 <div>
                     <h2 class="text-lg font-bold text-white font-amiri">Daftar Kesanggupan Donatur</h2>
@@ -289,6 +293,32 @@
                 <button type="button" id="btn-refresh" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-gold-300 border border-gold-500/30 rounded-lg text-xs font-semibold">
                     <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
                 </button>
+            </div>
+
+            <!-- MENU PILIHAN TAMPILKAN DAFTAR KESANGGUPAN PER RW -->
+            <div class="bg-slate-900/70 border border-gold-500/25 rounded-xl p-3.5 mb-4 space-y-2.5">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xs font-bold text-gold-300 uppercase tracking-wide flex items-center gap-1.5">
+                        <i class="fa-solid fa-filter"></i>
+                        <span>Tampilkan Daftar Kesanggupan per RW:</span>
+                    </span>
+                    <div id="selected-rw-actions" class="hidden flex items-center gap-2">
+                        <button type="button" id="btn-share-selected-rw" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-[11px] font-bold flex items-center gap-1">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            <span id="label-share-selected-rw">Share Daftar RW</span>
+                        </button>
+                        <button type="button" id="btn-copy-selected-rw" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-gold-300 border border-gold-500/30 rounded-lg text-[11px] font-bold flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>Salin</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="rw-filter-buttons" class="flex flex-wrap gap-2">
+                    <!-- Tombol RW dirender otomatis oleh JS -->
+                </div>
+                <div id="rw-filter-info" class="text-[11px] text-slate-400">
+                    Menampilkan semua daftar kesanggupan dari seluruh RW.
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -413,6 +443,7 @@
         let cachedItems = [];
         let adminPin = '';
         let rekapRwMode = 'all';
+        let selectedDonaturRw = 'ALL'; // 'ALL' atau salah satu RW di RW_LIST
         let lastSummary = { airMasuk: 0, kurmaMasuk: 0, uangMasuk: 0 };
 
         const formatRp = (n) => new Intl.NumberFormat('id-ID', {
@@ -454,6 +485,11 @@
                 return item.jenis === 'Uang' ? '✅ Sudah Transfer' : '✅ Sudah Dikirim';
             }
             return '⏳ Kesanggupan';
+        };
+
+        const getFilteredDonaturItems = (rwFilter = selectedDonaturRw) => {
+            if (rwFilter === 'ALL') return cachedItems;
+            return cachedItems.filter((item) => normalizeRW(item.rw) === rwFilter);
         };
 
         const updateDosCard = (masuk, target, barId, statusId) => {
@@ -515,7 +551,10 @@
             tbody.innerHTML = rows.map((r) => `
                 <tr class="hover:bg-emerald-950/40">
                     <td class="py-3 px-3 font-bold text-white whitespace-nowrap">
-                        <span class="inline-block bg-emerald-900/90 text-gold-300 border border-gold-500/30 px-2.5 py-0.5 rounded-md text-xs">${escapeHTML(r.rw)}</span>
+                        <button type="button" data-jump-rw="${escapeHTML(r.rw)}" class="inline-flex items-center gap-1.5 bg-emerald-900/90 hover:bg-gold-500 hover:text-emerald-950 text-gold-300 border border-gold-500/30 px-2.5 py-0.5 rounded-md text-xs transition-all" title="Lihat daftar donatur ${escapeHTML(r.rw)}">
+                            <span>${escapeHTML(r.rw)}</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-[9px] opacity-75"></i>
+                        </button>
                     </td>
                     <td class="py-3 px-3 text-center font-mono text-slate-300">${r.count}</td>
                     <td class="py-3 px-3 text-right font-mono text-white whitespace-nowrap">${r.air.toLocaleString('id-ID')} Dos</td>
@@ -538,6 +577,104 @@
                 btnDone.className = 'px-3.5 py-1.5 rounded-lg text-xs font-extrabold bg-emerald-500 text-emerald-950 transition-all';
                 btnAll.className = 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-slate-900 text-slate-300 border border-slate-700 hover:border-gold-500/40 transition-all';
             }
+        };
+
+        const renderRwFilterMenu = () => {
+            const counts = { ALL: cachedItems.length };
+            RW_LIST.forEach((rw) => { counts[rw] = 0; });
+            cachedItems.forEach((item) => {
+                const key = normalizeRW(item.rw);
+                counts[key] = (counts[key] || 0) + 1;
+            });
+
+            const options = [{ key: 'ALL', label: 'Semua RW' }, ...RW_LIST.map((rw) => ({ key: rw, label: rw }))];
+            const container = document.getElementById('rw-filter-buttons');
+
+            container.innerHTML = options.map((opt) => {
+                const isActive = selectedDonaturRw === opt.key;
+                const cls = isActive
+                    ? 'px-3 py-1.5 rounded-lg text-xs font-extrabold bg-gold-500 text-emerald-950 shadow transition-all'
+                    : 'px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-950 text-slate-300 border border-slate-700 hover:border-gold-500/50 hover:text-gold-300 transition-all';
+                return `
+                    <button type="button" data-filter-rw="${escapeHTML(opt.key)}" class="${cls}">
+                        ${escapeHTML(opt.label)} <span class="opacity-80 font-mono">(${counts[opt.key] || 0})</span>
+                    </button>
+                `;
+            }).join('');
+
+            const actionsBox = document.getElementById('selected-rw-actions');
+            const infoEl = document.getElementById('rw-filter-info');
+            const filtered = getFilteredDonaturItems(selectedDonaturRw);
+
+            if (selectedDonaturRw === 'ALL') {
+                actionsBox.classList.add('hidden');
+                infoEl.innerHTML = `Menampilkan <strong class="text-white">${filtered.length} kesanggupan</strong> dari seluruh RW.`;
+            } else {
+                actionsBox.classList.remove('hidden');
+                document.getElementById('label-share-selected-rw').textContent = `Share Daftar ${selectedDonaturRw} ke WA`;
+                infoEl.innerHTML = `Menampilkan daftar kesanggupan khusus <strong class="text-gold-300">${escapeHTML(selectedDonaturRw)}</strong> (${filtered.length} data).`;
+            }
+        };
+
+        const renderDonaturTable = () => {
+            renderRwFilterMenu();
+
+            const isAdmin = Boolean(adminPin);
+            document.getElementById('th-admin-aksi').classList.toggle('hidden', !isAdmin);
+
+            const tbody = document.getElementById('donatur-tbody');
+            const filteredItems = getFilteredDonaturItems(selectedDonaturRw);
+
+            if (filteredItems.length === 0) {
+                const emptyText = selectedDonaturRw === 'ALL'
+                    ? 'Belum ada kesanggupan donasi. Jadilah yang pertama mengisi di atas!'
+                    : `Belum ada daftar kesanggupan donasi dari ${escapeHTML(selectedDonaturRw)}.`;
+                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 7 : 6}" class="py-8 text-center text-slate-500">${emptyText}</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = filteredItems.map((item, idx) => {
+                const isDone = item.status === 'Sudah';
+                const isUang = item.jenis === 'Uang';
+                const statusLabel = getStatusLabel(item);
+
+                const badge = isDone
+                    ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">${statusLabel}</span>`
+                    : `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">${statusLabel}</span>`;
+
+                const rwDisplay = item.rw && item.rw !== '-' ? escapeHTML(item.rw) : '-';
+
+                const adminCols = isAdmin ? `
+                    <td class="py-3 px-3 text-center whitespace-nowrap">
+                        <button type="button" data-action="toggle" data-id="${escapeHTML(item.id)}" data-jenis="${escapeHTML(item.jenis)}" class="px-2.5 py-1 rounded-lg text-xs font-bold mr-1 ${isDone ? 'bg-slate-700 text-slate-200' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}">
+                            ${isDone ? 'Batal' : (isUang ? '✅ Transfer' : '✅ Dikirim')}
+                        </button>
+                        <button type="button" data-action="edit" data-id="${escapeHTML(item.id)}" class="px-2 py-1 rounded-lg text-xs bg-amber-600 hover:bg-amber-500 text-white mr-1" title="Edit Data">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
+                        <button type="button" data-action="delete" data-id="${escapeHTML(item.id)}" data-nama="${escapeHTML(item.nama)}" class="px-2 py-1 rounded-lg text-xs bg-red-900/70 hover:bg-red-800 text-red-200" title="Hapus">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </td>
+                ` : '';
+
+                return `
+                    <tr class="hover:bg-emerald-950/40">
+                        <td class="py-3 px-3 text-slate-400 font-mono">${idx + 1}</td>
+                        <td class="py-3 px-3">
+                            <div class="font-bold text-white">${escapeHTML(item.nama)}</div>
+                            ${item.catatan ? `<div class="text-[11px] text-slate-400 mt-0.5">${escapeHTML(item.catatan)}</div>` : ''}
+                        </td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">
+                            <span class="inline-block text-[11px] font-bold bg-emerald-900 text-gold-300 border border-gold-500/30 px-2.5 py-0.5 rounded-md">${rwDisplay}</span>
+                        </td>
+                        <td class="py-3 px-3 text-gold-300 font-medium whitespace-nowrap">${escapeHTML(item.jenis)}</td>
+                        <td class="py-3 px-3 text-right font-mono font-bold text-white whitespace-nowrap">${formatJumlahItem(item)}</td>
+                        <td class="py-3 px-3 text-center whitespace-nowrap">${badge}</td>
+                        ${adminCols}
+                    </tr>
+                `;
+            }).join('');
         };
 
         const renderTableAndSummary = () => {
@@ -584,58 +721,7 @@
             }
 
             renderRwRecap();
-
-            const isAdmin = Boolean(adminPin);
-            document.getElementById('th-admin-aksi').classList.toggle('hidden', !isAdmin);
-
-            const tbody = document.getElementById('donatur-tbody');
-            if (cachedItems.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="${isAdmin ? 7 : 6}" class="py-8 text-center text-slate-500">Belum ada kesanggupan donasi. Jadilah yang pertama mengisi di atas!</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = cachedItems.map((item, idx) => {
-                const isDone = item.status === 'Sudah';
-                const isUang = item.jenis === 'Uang';
-                const statusLabel = getStatusLabel(item);
-
-                const badge = isDone
-                    ? `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">${statusLabel}</span>`
-                    : `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">${statusLabel}</span>`;
-
-                const rwDisplay = item.rw && item.rw !== '-' ? escapeHTML(item.rw) : '-';
-
-                const adminCols = isAdmin ? `
-                    <td class="py-3 px-3 text-center whitespace-nowrap">
-                        <button type="button" data-action="toggle" data-id="${escapeHTML(item.id)}" data-jenis="${escapeHTML(item.jenis)}" class="px-2.5 py-1 rounded-lg text-xs font-bold mr-1 ${isDone ? 'bg-slate-700 text-slate-200' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}">
-                            ${isDone ? 'Batal' : (isUang ? '✅ Transfer' : '✅ Dikirim')}
-                        </button>
-                        <button type="button" data-action="edit" data-id="${escapeHTML(item.id)}" class="px-2 py-1 rounded-lg text-xs bg-amber-600 hover:bg-amber-500 text-white mr-1" title="Edit Data">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </button>
-                        <button type="button" data-action="delete" data-id="${escapeHTML(item.id)}" data-nama="${escapeHTML(item.nama)}" class="px-2 py-1 rounded-lg text-xs bg-red-900/70 hover:bg-red-800 text-red-200" title="Hapus">
-                            <i class="fa-solid fa-trash-can"></i>
-                        </button>
-                    </td>
-                ` : '';
-
-                return `
-                    <tr class="hover:bg-emerald-950/40">
-                        <td class="py-3 px-3 text-slate-400 font-mono">${idx + 1}</td>
-                        <td class="py-3 px-3">
-                            <div class="font-bold text-white">${escapeHTML(item.nama)}</div>
-                            ${item.catatan ? `<div class="text-[11px] text-slate-400 mt-0.5">${escapeHTML(item.catatan)}</div>` : ''}
-                        </td>
-                        <td class="py-3 px-3 text-center whitespace-nowrap">
-                            <span class="inline-block text-[11px] font-bold bg-emerald-900 text-gold-300 border border-gold-500/30 px-2.5 py-0.5 rounded-md">${rwDisplay}</span>
-                        </td>
-                        <td class="py-3 px-3 text-gold-300 font-medium whitespace-nowrap">${escapeHTML(item.jenis)}</td>
-                        <td class="py-3 px-3 text-right font-mono font-bold text-white whitespace-nowrap">${formatJumlahItem(item)}</td>
-                        <td class="py-3 px-3 text-center whitespace-nowrap">${badge}</td>
-                        ${adminCols}
-                    </tr>
-                `;
-            }).join('');
+            renderDonaturTable();
         };
 
         const openEditModal = (id) => {
@@ -746,6 +832,45 @@
             lines.push(`💰 Dana Uang: *${formatRp(grandTotal.uang)}*`);
             lines.push('━━━━━━━━━━━━━━━━━━');
             lines.push(`Rekening BSI: *${NO_REKENING}* a.n. ${ATAS_NAMA}`);
+            lines.push(`Konfirmasi Bendahara (${NAMA_BENDAHARA}): 087785330299`);
+            lines.push('');
+            lines.push(`Isi kesanggupan lewat link:\n${window.location.href}`);
+
+            return lines.join('\n');
+        };
+
+        const buildSelectedRwListText = (rwName) => {
+            const list = getFilteredDonaturItems(rwName);
+            let air = 0, kurma = 0, uang = 0;
+
+            let lines = [
+                `*🌙 DAFTAR KESANGGUPAN DONASI — ${rwName.toUpperCase()}*`,
+                '*Pra-Ramadhan 1448 H — Masjid Al-Marhamah*',
+                '_(✅ = Sudah Transfer/Dikirim | ⏳ = Kesanggupan)_',
+                ''
+            ];
+
+            if (list.length === 0) {
+                lines.push('_Belum ada data kesanggupan dari wilayah ini._');
+            } else {
+                list.forEach((item, idx) => {
+                    const jml = Number(item.jumlah) || 0;
+                    if (item.jenis === 'Air Mineral') air += jml;
+                    else if (item.jenis === 'Kurma') kurma += jml;
+                    else if (item.jenis === 'Uang') uang += jml;
+
+                    const jmlTxt = item.jenis === 'Uang' ? formatRp(jml) : `${jml.toLocaleString('id-ID')} Dos`;
+                    lines.push(`${idx + 1}. ${item.nama} — ${item.jenis}: ${jmlTxt} (${getStatusLabel(item)})`);
+                });
+            }
+
+            lines.push('');
+            lines.push(`*Total Kesanggupan ${rwName} (${list.length} data):*`);
+            lines.push(`• Air Mineral: ${air.toLocaleString('id-ID')} Dos`);
+            lines.push(`• Kurma: ${kurma.toLocaleString('id-ID')} Dos`);
+            lines.push(`• Dana Uang: ${formatRp(uang)}`);
+            lines.push('');
+            lines.push(`Rekening BSI: ${NO_REKENING} a.n. ${ATAS_NAMA}`);
             lines.push(`Konfirmasi Bendahara (${NAMA_BENDAHARA}): 087785330299`);
             lines.push('');
             lines.push(`Isi kesanggupan lewat link:\n${window.location.href}`);
@@ -896,6 +1021,36 @@
                     btn.disabled = false;
                     btn.innerHTML = orig;
                 }
+            });
+
+            // Klik tombol filter RW di bagian Daftar Donatur
+            document.getElementById('rw-filter-buttons').addEventListener('click', (e) => {
+                const btn = e.target.closest('button[data-filter-rw]');
+                if (!btn) return;
+                selectedDonaturRw = btn.dataset.filterRw;
+                renderDonaturTable();
+            });
+
+            // Klik nama RW di tabel Rekap Per RW -> langsung lompat & filter daftar donatur RW tersebut
+            document.getElementById('rekap-rw-tbody').addEventListener('click', (e) => {
+                const btn = e.target.closest('button[data-jump-rw]');
+                if (!btn) return;
+                selectedDonaturRw = btn.dataset.jumpRw;
+                renderDonaturTable();
+                document.getElementById('daftar-donatur').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Share & Copy daftar donatur khusus RW terpilih
+            document.getElementById('btn-share-selected-rw').addEventListener('click', () => {
+                if (selectedDonaturRw === 'ALL') return;
+                const text = buildSelectedRwListText(selectedDonaturRw);
+                window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
+            });
+            document.getElementById('btn-copy-selected-rw').addEventListener('click', () => {
+                if (selectedDonaturRw === 'ALL') return;
+                navigator.clipboard.writeText(buildSelectedRwListText(selectedDonaturRw))
+                    .then(() => showAlert(`✅ Daftar kesanggupan ${selectedDonaturRw} berhasil disalin! Tinggal tempel di grup WA.`))
+                    .catch(() => showAlert('Gagal menyalin teks otomatis.', true));
             });
 
             document.getElementById('donatur-tbody').addEventListener('click', (e) => {
