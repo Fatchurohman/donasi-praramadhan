@@ -319,7 +319,7 @@
                 </div>
                 <div>
                     <h2 class="text-xs sm:text-sm font-bold text-gold-300">Panel Verifikasi Panitia / Bendahara</h2>
-                    <p class="text-[11px] text-slate-400">Masukkan PIN khusus Panitia untuk mengaktifkan tombol verifikasi di daftar donatur.</p>
+                    <p class="text-[11px] text-slate-400">Masukkan PIN khusus Panitia untuk mengaktifkan tombol verifikasi, edit & hapus data.</p>
                 </div>
             </div>
             <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -328,6 +328,67 @@
             </div>
         </section>
     </main>
+
+    <!-- MODAL EDIT DONATUR (KHUSUS ADMIN) -->
+    <div id="edit-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-card rounded-2xl w-full max-w-md p-6 border-2 border-gold-500/50 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-gold-500/20 pb-3">
+                <h3 class="text-lg font-bold text-gold-300 font-amiri flex items-center gap-2">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>Edit Data Donatur</span>
+                </h3>
+                <button type="button" id="btn-close-edit" class="text-slate-400 hover:text-white text-xl font-bold leading-none">&times;</button>
+            </div>
+
+            <form id="edit-form" class="space-y-3.5">
+                <input type="hidden" id="edit-id">
+
+                <div>
+                    <label for="edit-nama" class="block text-xs font-bold text-gold-300 uppercase mb-1">Nama Donatur</label>
+                    <input type="text" id="edit-nama" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:border-gold-400 focus:outline-none">
+                </div>
+
+                <div>
+                    <label for="edit-rw" class="block text-xs font-bold text-gold-300 uppercase mb-1">Alamat RW</label>
+                    <select id="edit-rw" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:border-gold-400 focus:outline-none">
+                        <option value="RW 60">RW 60</option>
+                        <option value="RW 61">RW 61</option>
+                        <option value="RW 62">RW 62</option>
+                        <option value="RW 63">RW 63</option>
+                        <option value="RW 66">RW 66</option>
+                        <option value="RW Lain">RW Lain</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label for="edit-jenis" class="block text-xs font-bold text-gold-300 uppercase mb-1">Jenis Donasi</label>
+                        <select id="edit-jenis" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white focus:border-gold-400 focus:outline-none">
+                            <option value="Air Mineral">Air Mineral</option>
+                            <option value="Kurma">Kurma</option>
+                            <option value="Uang">Uang</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="edit-jumlah" id="edit-label-jumlah" class="block text-xs font-bold text-gold-300 uppercase mb-1">Jumlah (Dos)</label>
+                        <input type="number" id="edit-jumlah" min="1" step="any" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white font-mono focus:border-gold-400 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="edit-catatan" class="block text-xs font-bold text-slate-300 uppercase mb-1">Catatan (Opsional)</label>
+                    <input type="text" id="edit-catatan" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-sm text-white focus:border-gold-400 focus:outline-none">
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" id="btn-cancel-edit" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-bold">Batal</button>
+                    <button type="submit" id="btn-save-edit" class="px-5 py-2 bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-400 hover:to-gold-500 text-emerald-950 rounded-xl text-xs font-extrabold shadow">
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <footer class="bg-slate-950 text-slate-500 text-xs py-6 border-t border-slate-800 text-center px-4">
         © 1448 H Panitia Penggalangan Donasi Pra-Ramadhan — Masjid Al-Marhamah
@@ -351,7 +412,7 @@
 
         let cachedItems = [];
         let adminPin = '';
-        let rekapRwMode = 'all'; // 'all' = Semua Kesanggupan, 'done' = Sudah Transfer/Dikirim
+        let rekapRwMode = 'all';
         let lastSummary = { airMasuk: 0, kurmaMasuk: 0, uangMasuk: 0 };
 
         const formatRp = (n) => new Intl.NumberFormat('id-ID', {
@@ -468,7 +529,6 @@
             document.getElementById('rw-total-kurma').textContent = `${grandTotal.kurma.toLocaleString('id-ID')} Dos`;
             document.getElementById('rw-total-uang').textContent = formatRp(grandTotal.uang);
 
-            // Update style tombol mode
             const btnAll = document.getElementById('btn-mode-all');
             const btnDone = document.getElementById('btn-mode-done');
             if (rekapRwMode === 'all') {
@@ -502,17 +562,14 @@
 
             lastSummary = { airMasuk, kurmaMasuk, uangMasuk };
 
-            // Air Mineral
             document.getElementById('sum-air-masuk').innerHTML = `${airMasuk.toLocaleString('id-ID')} Dos <span class="text-xs font-normal text-slate-400">sudah dikirim</span>`;
             document.getElementById('sum-air-total').textContent = `${airTotal.toLocaleString('id-ID')} Dos`;
             updateDosCard(airMasuk, TARGET_AIR_DOS, 'bar-air', 'status-air');
 
-            // Kurma
             document.getElementById('sum-kurma-masuk').innerHTML = `${kurmaMasuk.toLocaleString('id-ID')} Dos <span class="text-xs font-normal text-slate-400">sudah dikirim</span>`;
             document.getElementById('sum-kurma-total').textContent = `${kurmaTotal.toLocaleString('id-ID')} Dos`;
             updateDosCard(kurmaMasuk, TARGET_KURMA_DOS, 'bar-kurma', 'status-kurma');
 
-            // Dana Uang
             document.getElementById('sum-uang-masuk').innerHTML = `${formatRp(uangMasuk)} <span class="text-xs font-normal text-slate-400">sudah transfer</span>`;
             document.getElementById('sum-uang-total').textContent = formatRp(uangTotal);
             const statusUangEl = document.getElementById('status-uang');
@@ -526,10 +583,8 @@
                 }
             }
 
-            // Render Rekap Per RW
             renderRwRecap();
 
-            // Render Daftar Donatur (Kolom Nama & RW terpisah)
             const isAdmin = Boolean(adminPin);
             document.getElementById('th-admin-aksi').classList.toggle('hidden', !isAdmin);
 
@@ -555,6 +610,9 @@
                         <button type="button" data-action="toggle" data-id="${escapeHTML(item.id)}" data-jenis="${escapeHTML(item.jenis)}" class="px-2.5 py-1 rounded-lg text-xs font-bold mr-1 ${isDone ? 'bg-slate-700 text-slate-200' : 'bg-emerald-600 hover:bg-emerald-500 text-white'}">
                             ${isDone ? 'Batal' : (isUang ? '✅ Transfer' : '✅ Dikirim')}
                         </button>
+                        <button type="button" data-action="edit" data-id="${escapeHTML(item.id)}" class="px-2 py-1 rounded-lg text-xs bg-amber-600 hover:bg-amber-500 text-white mr-1" title="Edit Data">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </button>
                         <button type="button" data-action="delete" data-id="${escapeHTML(item.id)}" data-nama="${escapeHTML(item.nama)}" class="px-2 py-1 rounded-lg text-xs bg-red-900/70 hover:bg-red-800 text-red-200" title="Hapus">
                             <i class="fa-solid fa-trash-can"></i>
                         </button>
@@ -578,6 +636,25 @@
                     </tr>
                 `;
             }).join('');
+        };
+
+        const openEditModal = (id) => {
+            const item = cachedItems.find((x) => x.id === id);
+            if (!item) return;
+
+            document.getElementById('edit-id').value = item.id;
+            document.getElementById('edit-nama').value = item.nama || '';
+            document.getElementById('edit-rw').value = normalizeRW(item.rw);
+            document.getElementById('edit-jenis').value = item.jenis || 'Air Mineral';
+            document.getElementById('edit-jumlah').value = Number(item.jumlah) || 1;
+            document.getElementById('edit-catatan').value = item.catatan || '';
+            document.getElementById('edit-label-jumlah').textContent = item.jenis === 'Uang' ? 'Nominal (Rp)' : 'Jumlah (Dos)';
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+        };
+
+        const closeEditModal = () => {
+            document.getElementById('edit-modal').classList.add('hidden');
         };
 
         async function loadData() {
@@ -738,6 +815,10 @@
                 }
             });
 
+            document.getElementById('edit-jenis').addEventListener('change', (e) => {
+                document.getElementById('edit-label-jumlah').textContent = e.target.value === 'Uang' ? 'Nominal (Rp)' : 'Jumlah (Dos)';
+            });
+
             document.getElementById('donasi-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const btn = document.getElementById('btn-submit');
@@ -779,13 +860,58 @@
                 }
             });
 
+            document.getElementById('edit-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('btn-save-edit');
+                const orig = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...';
+
+                try {
+                    const payload = {
+                        action: 'edit',
+                        pin: adminPin,
+                        id: document.getElementById('edit-id').value,
+                        nama: document.getElementById('edit-nama').value.trim(),
+                        rw: document.getElementById('edit-rw').value,
+                        jenis: document.getElementById('edit-jenis').value,
+                        jumlah: Number(document.getElementById('edit-jumlah').value),
+                        catatan: document.getElementById('edit-catatan').value.trim()
+                    };
+
+                    const res = await fetch(GAS_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify(payload)
+                    });
+                    const json = await res.json();
+                    if (json.status !== 'ok') throw new Error(json.message);
+
+                    closeEditModal();
+                    showAlert('✅ ' + json.message);
+                    loadData();
+                } catch (err) {
+                    showAlert('❌ Gagal memperbarui data: ' + err.message, true);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = orig;
+                }
+            });
+
             document.getElementById('donatur-tbody').addEventListener('click', (e) => {
                 const btn = e.target.closest('button[data-action]');
                 if (!btn) return;
                 const action = btn.dataset.action;
                 const id = btn.dataset.id;
                 if (action === 'toggle') toggleStatus(id, btn.dataset.jenis || '');
+                if (action === 'edit') openEditModal(id);
                 if (action === 'delete') deleteItem(id, btn.dataset.nama || '');
+            });
+
+            document.getElementById('btn-close-edit').addEventListener('click', closeEditModal);
+            document.getElementById('btn-cancel-edit').addEventListener('click', closeEditModal);
+            document.getElementById('edit-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'edit-modal') closeEditModal();
             });
 
             document.getElementById('btn-activate-admin').addEventListener('click', () => {
@@ -793,10 +919,9 @@
                 if (!pin) return showAlert('Masukkan PIN Panitia terlebih dahulu.', true);
                 adminPin = pin;
                 renderTableAndSummary();
-                showAlert('🔓 Mode Admin aktif. Silakan klik tombol verifikasi pada daftar donatur.');
+                showAlert('🔓 Mode Admin aktif. Silakan klik tombol verifikasi, edit (✏️), atau hapus pada daftar donatur.');
             });
 
-            // Mode filter Rekap RW
             document.getElementById('btn-mode-all').addEventListener('click', () => {
                 rekapRwMode = 'all';
                 renderRwRecap();
@@ -806,7 +931,6 @@
                 renderRwRecap();
             });
 
-            // Share & Copy Rekap RW ke WA
             document.getElementById('btn-share-rw-wa').addEventListener('click', () => {
                 const text = buildRekapRwText();
                 window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer');
